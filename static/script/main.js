@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // );
             wavesurfer.util.ajax({
                 responseType: 'json',
-                url: 'annotations.json'
+                url: 'static/json/annotations.json'
             }).on('success', function (data) {
                 loadRegions(data);
                 saveRegions();
