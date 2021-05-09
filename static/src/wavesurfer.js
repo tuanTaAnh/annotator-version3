@@ -254,11 +254,15 @@ var WaveSurfer = {
     },
 
     drawBuffer: function () {
+        console.log("drawBuffer");
         var nominalWidth = Math.round(
             this.getDuration() * this.params.minPxPerSec * this.params.pixelRatio
         );
+        console.log("nominalWidth: ", nominalWidth);
         var parentWidth = this.drawer.getWidth();
         var width = nominalWidth;
+
+        console.log("parentWidth: ", parentWidth);
 
         // Fill container
         if (this.params.fillParent && (!this.params.scrollParent || nominalWidth < parentWidth)) {
@@ -266,6 +270,7 @@ var WaveSurfer = {
         }
 
         var peaks = this.backend.getPeaks(width);
+        console.log("this.backend: ", this.backend);
         this.drawer.drawPeaks(peaks, width);
         this.fireEvent('redraw', peaks, width);
     },
@@ -436,6 +441,25 @@ var WaveSurfer = {
         this.drawer.progress(0);
         this.drawer.setWidth(0);
         this.drawer.drawPeaks({ length: this.drawer.getWidth() }, 0);
+    },
+
+    /**
+     * zoom waveform.
+     */
+    zoom: function(pxPerSec) {
+        console.log("pxPerSec: ", pxPerSec);
+      if (!pxPerSec) {
+        this.params.minPxPerSec = this.defaultParams.minPxPerSec;
+        this.params.scrollParent = false;
+      } else {
+        this.params.minPxPerSec = pxPerSec;
+        this.params.scrollParent = true;
+      }
+
+      this.drawBuffer();
+      this.drawer.progress(this.backend.getPlayedPercents());
+      this.drawer.recenter(this.getCurrentTime() / this.getDuration());
+      this.fireEvent('zoom', pxPerSec);
     },
 
     /**

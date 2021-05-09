@@ -34,8 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     });
 
-
-
     // Regions
     if (wavesurfer.enableDragSelection) {
         wavesurfer.enableDragSelection({
@@ -47,6 +45,14 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Regions */
 
      wavesurfer.on('ready', function() {
+//        // Init Timeline plugin
+//        var timeline = Object.create(WaveSurfer.Timeline);
+//
+//        timeline.init({
+//            wavesurfer: wavesurfer,
+//            container: '#wave-timeline'
+//        });
+
          if (localStorage.regions) {
             loadRegions(JSON.parse(localStorage.regions));
         } else {
@@ -316,12 +322,43 @@ GLOBAL_ACTIONS['export'] = function () {
 
 };
 
+GLOBAL_ACTIONS['zoom-in'] = function () {
+
+    var value = wavesurfer.params.minPxPerSec;
+    console.log("value: ", value);
+    if(value > 10)
+    {
+        value = value -5;
+    }
+
+    // set initial zoom to match slider value
+    wavesurfer.zoom(value);
+
+
+};
+
+GLOBAL_ACTIONS['zoom-out'] = function () {
+
+    var value = wavesurfer.params.minPxPerSec;
+    console.log("value: ", value);
+    if(value <= 45 )
+    {
+        value = value + 5;
+    }
+
+    // set initial zoom to match slider value
+    wavesurfer.zoom(value);
+
+
+};
+
 // Drag'n'drop
 document.addEventListener('DOMContentLoaded', function () {
-    var toggleActive = function (e, toggle) {
+    var toggleActive = function (e, toggle)
+    {
         e.stopPropagation();
         e.preventDefault();
-        toggle ? e.target.classList.add('wavesurfer-dragover') :
+        toggle ? e.target.classList.add('wavesurfer-dragover'):
             e.target.classList.remove('wavesurfer-dragover');
     };
 
@@ -332,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Load the file into wavesurfer
             if (e.dataTransfer.files.length) {
+                localStorage.clear();
                 console.log("wavesurfer.loadBlob");
                 wavesurfer.loadBlob(e.dataTransfer.files[0]);
                  console.log("wavesurfer.loadBlob END");
